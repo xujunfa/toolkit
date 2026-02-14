@@ -1,12 +1,13 @@
-# tauri-mac-starter
+# Toolkit
 
-Tauri v2 + React + TypeScript 的 macOS 桌面模板仓库（业务中立）。
+Tauri v2 + React + TypeScript 的 macOS 桌面工具箱应用。
 
 ## 项目定位
 
-- 提供可直接扩展的模板骨架，不包含 area/project/task/pomodoro 业务域。
-- 当前 UI：
-  - Main Window：模板首页（`src/windows/main/App.tsx`）
+- 侧边栏导航的多模块工具箱。
+- 当前模块：Claude Code 配置管理（Profile CRUD + .zshrc 别名同步）、ZenMux Quota Monitor（API 轮询 + Tray 显示）。
+- UI：
+  - Main Window：侧边栏 + 路由（`src/windows/main/App.tsx`）
   - Timer Window：占位浮窗（`src/windows/timer/App.tsx`）
 
 ## 当前系统真相
@@ -16,17 +17,28 @@ Tauri v2 + React + TypeScript 的 macOS 桌面模板仓库（业务中立）。
 - 快捷键：
   - `Cmd+Shift+O`：切换 timer
   - `Cmd+Shift+L`：切换 main
-- SQLite：`starter.db`
-- Identifier：`com.tauri-mac-starter.app`
+- SQLite：`toolkit.db`
+- Identifier：`com.toolkit.app`
 - IPC 契约真相：`src/core/ipc.generated.ts`
+- .zshrc 同步标记符：`CLAUDE_CODE_ALIAS_START` / `CLAUDE_CODE_ALIAS_END`
 
-## Rust 命令契约（仅 5 个）
+## Rust 命令契约（15 个）
 
 - `ping`
 - `get_app_info`
 - `get_settings`
 - `set_settings`
 - `update_tray_title`
+- `list_profiles`
+- `create_profile`
+- `update_profile`
+- `delete_profile`
+- `sync_profiles_to_zshrc`
+- `get_zenmux_config`
+- `set_zenmux_config`
+- `get_zenmux_usage`
+- `start_zenmux_polling`
+- `stop_zenmux_polling`
 
 > 新增命令必须先改 Rust + `generate_handler![]`，再跑 `pnpm gen:ipc`。
 
@@ -35,11 +47,18 @@ Tauri v2 + React + TypeScript 的 macOS 桌面模板仓库（业务中立）。
 - `src-tauri/src/lib.rs`：窗口/Tray/快捷键/命令注册
 - `src-tauri/src/commands/app.rs`：app 基础命令
 - `src-tauri/src/commands/settings.rs`：settings 读写命令
+- `src-tauri/src/commands/profiles.rs`：Profile CRUD + .zshrc 同步
+- `src-tauri/src/commands/zenmux.rs`：ZenMux 配置/轮询/API 抓取
 - `src-tauri/src/db.rs`：migration 注册 + db pool
-- `src-tauri/migrations/001_init.sql`：最小 schema（`app_settings`）
+- `src-tauri/migrations/`：001_init.sql + 002_profiles.sql + 003_zenmux_config.sql
 - `src/core/ipc.ts`：`typedInvoke` 封装
 - `src/core/ipc.generated.ts`：生成 IPC 类型（禁止手改）
-- `src/modules/app/*`、`src/modules/settings/*`：前端 API 模块
+- `src/modules/profiles/*`：前端 API + TanStack Query hooks
+- `src/modules/zenmux/*`：ZenMux 前端 API + TanStack Query hooks
+- `src/pages/ClaudeConfigPage.tsx`：配置管理页面入口
+- `src/pages/ZenMuxQuotaPage.tsx`：ZenMux 额度监控页面
+- `src/pages/claude-config/*`：ProfileList、ProfileDialog、DeleteConfirmDialog
+- `src/components/layout/*`：Sidebar + AppLayout
 
 ## 常用命令
 

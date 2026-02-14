@@ -1,4 +1,4 @@
-# tauri-mac-starter
+# Toolkit
 
 [English](./README.md) | [简体中文](./README.zh-CN.md)
 
@@ -9,7 +9,7 @@ A production-ready macOS desktop app starter built with Tauri v2 + React + TypeS
 - Tauri v2 Rust backend + React frontend
 - Multi-window app structure (`main` + `timer`)
 - Tray support + global shortcuts
-- SQLite integration (`starter.db`)
+- SQLite integration (`toolkit.db`)
 - Type-safe IPC workflow (`Rust command -> generated TS types -> typedInvoke`)
 - Minimal template commands (`ping`, `get_app_info`, `get_settings`, `set_settings`, `update_tray_title`)
 
@@ -115,8 +115,8 @@ pnpm test:rust
 - Shortcuts:
   - `Cmd+Shift+O`: toggle timer window
   - `Cmd+Shift+L`: toggle main window
-- Database file: `starter.db`
-- Identifier: `com.tauri-mac-starter.app`
+- Database file: `toolkit.db`
+- Identifier: `com.toolkit.app`
 
 ## Troubleshooting
 

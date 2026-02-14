@@ -1,4 +1,4 @@
-# tauri-mac-starter
+# Toolkit
 
 [English](./README.md) | [简体中文](./README.zh-CN.md)
 
@@ -9,7 +9,7 @@
 - Tauri v2 Rust 后端 + React 前端
 - 多窗口结构（`main` + `timer`）
 - Tray 支持 + 全局快捷键
-- SQLite 集成（`starter.db`）
+- SQLite 集成（`toolkit.db`）
 - 类型安全 IPC 工作流（`Rust command -> 生成 TS 类型 -> typedInvoke`）
 - 最小模板命令集（`ping`、`get_app_info`、`get_settings`、`set_settings`、`update_tray_title`）
 
@@ -113,8 +113,8 @@ pnpm test:rust
 - 全局快捷键：
   - `Cmd+Shift+O`：切换 timer 窗口
   - `Cmd+Shift+L`：切换 main 窗口
-- 数据库文件：`starter.db`
-- 应用 identifier：`com.tauri-mac-starter.app`
+- 数据库文件：`toolkit.db`
+- 应用 identifier：`com.toolkit.app`
 
 ## 常见问题
 

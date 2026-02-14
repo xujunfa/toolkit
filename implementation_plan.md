@@ -1,4 +1,4 @@
-# tauri-mac-starter Phase Implementation Plan
+# Toolkit Phase Implementation Plan
 
 > **For Codex:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 

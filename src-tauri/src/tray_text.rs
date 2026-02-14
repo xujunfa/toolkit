@@ -33,15 +33,15 @@ pub fn set_two_line_title(tray: &tray_icon::TrayIcon, line1: &str, line2: &str) 
 
     let full_range = NSRange::new(0, ns_text.len());
 
-    // 9pt light system font
-    let font = unsafe { NSFont::systemFontOfSize_weight(9.0, NSFontWeightLight) };
+    // 8pt light system font for better centering in menu bar
+    let font = unsafe { NSFont::systemFontOfSize_weight(8.0, NSFontWeightLight) };
 
     // Line spacing tuned for vertical centering in the 22pt menu bar.
-    // 2 lines × 11pt = 22pt → fills the bar height exactly.
+    // 2 lines × 10pt = 20pt with 1pt padding top/bottom
     let para_style = NSMutableParagraphStyle::new();
     para_style.setLineSpacing(0.0);
-    para_style.setMinimumLineHeight(11.0);
-    para_style.setMaximumLineHeight(11.0);
+    para_style.setMinimumLineHeight(10.0);
+    para_style.setMaximumLineHeight(10.0);
 
     // Apply attributes to the full range
     // SAFETY: NSFont and NSMutableParagraphStyle are valid attribute value types.

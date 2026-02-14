@@ -1,5 +1,5 @@
 {
-  "name": "tauri-mac-starter",
+  "name": "toolkit",
   "private": true,
   "version": "0.1.0",
   "description": "A production-ready Tauri v2 + React template for macOS desktop apps",
@@ -35,6 +35,7 @@
     "radix-ui": "^1.4.3",
     "react": "^19",
     "react-dom": "^19",
+    "react-router-dom": "^7.13.0",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {

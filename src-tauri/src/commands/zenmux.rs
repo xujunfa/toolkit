@@ -160,6 +160,8 @@ pub struct TrayLines {
 /// - 0 items  → line1="ZM", line2="--"
 /// - 1 item   → line1=item text, line2="" (rendered as single-line)
 /// - 2+ items → line1=first item, line2=remaining items joined with space
+///
+/// Always shows both 5h and W lines if available, with 0% as fallback for missing.
 pub fn format_tray_lines(items: &[ZenmuxQuotaItem]) -> TrayLines {
     if items.is_empty() {
         return TrayLines {
@@ -169,7 +171,57 @@ pub fn format_tray_lines(items: &[ZenmuxQuotaItem]) -> TrayLines {
         };
     }
 
-    let parts: Vec<String> = items
+    // Find 5h and week items, fallback to 0% if missing
+    let mut has_5h = false;
+    let mut has_week = false;
+    let mut items_with_fallback: Vec<ZenmuxQuotaItem> = Vec::new();
+
+    for item in items {
+        if item.period_type == "hour_5" {
+            has_5h = true;
+        } else if item.period_type == "week" {
+            has_week = true;
+        }
+        items_with_fallback.push(item.clone());
+    }
+
+    // Add fallback 0% items if missing
+    if !has_5h {
+        items_with_fallback.push(ZenmuxQuotaItem {
+            tier_code: "max".to_string(),
+            period_type: "hour_5".to_string(),
+            period_duration: "5".to_string(),
+            cycle_start_time: String::new(),
+            cycle_end_time: String::new(),
+            used_rate: 0.0,
+            quota_status: 0,
+            status: 0,
+        });
+    }
+    if !has_week {
+        items_with_fallback.push(ZenmuxQuotaItem {
+            tier_code: "max".to_string(),
+            period_type: "week".to_string(),
+            period_duration: "168".to_string(),
+            cycle_start_time: String::new(),
+            cycle_end_time: String::new(),
+            used_rate: 0.0,
+            quota_status: 0,
+            status: 0,
+        });
+    }
+
+    // Sort: hour_5 first, then week
+    items_with_fallback.sort_by(|a, b| {
+        let order = |t: &str| match t {
+            "hour_5" => 0,
+            "week" => 1,
+            _ => 2,
+        };
+        order(&a.period_type).cmp(&order(&b.period_type))
+    });
+
+    let parts: Vec<String> = items_with_fallback
         .iter()
         .map(|item| {
             let remaining_pct = ((1.0 - item.used_rate) * 100.0).round() as i32;
@@ -185,18 +237,10 @@ pub fn format_tray_lines(items: &[ZenmuxQuotaItem]) -> TrayLines {
 
     let combined = parts.join(" ");
 
-    if parts.len() == 1 {
-        TrayLines {
-            line1: parts[0].clone(),
-            line2: String::new(),
-            combined,
-        }
-    } else {
-        TrayLines {
-            line1: parts[0].clone(),
-            line2: parts[1..].join(" "),
-            combined,
-        }
+    TrayLines {
+        line1: parts[0].clone(),
+        line2: if parts.len() > 1 { parts[1..].join(" ") } else { String::new() },
+        combined,
     }
 }
 
@@ -468,6 +512,7 @@ mod tests {
 
     #[test]
     fn format_tray_lines_single_item() {
+        // Only hour_5: should fallback to show week as 0%
         let items = vec![ZenmuxQuotaItem {
             tier_code: "max".to_string(),
             period_type: "hour_5".to_string(),
@@ -480,8 +525,27 @@ mod tests {
         }];
         let lines = format_tray_lines(&items);
         assert_eq!(lines.line1, "5h:76%");
-        assert_eq!(lines.line2, "");
-        assert_eq!(lines.combined, "5h:76%");
+        assert_eq!(lines.line2, "W:100%");
+        assert_eq!(lines.combined, "5h:76% W:100%");
+    }
+
+    #[test]
+    fn format_tray_lines_only_week() {
+        // Only week: should fallback to show 5h as 0%
+        let items = vec![ZenmuxQuotaItem {
+            tier_code: "max".to_string(),
+            period_type: "week".to_string(),
+            period_duration: "168".to_string(),
+            cycle_start_time: "".to_string(),
+            cycle_end_time: "".to_string(),
+            used_rate: 0.5,
+            quota_status: 0,
+            status: 0,
+        }];
+        let lines = format_tray_lines(&items);
+        assert_eq!(lines.line1, "5h:100%");
+        assert_eq!(lines.line2, "W:50%");
+        assert_eq!(lines.combined, "5h:100% W:50%");
     }
 
     #[test]

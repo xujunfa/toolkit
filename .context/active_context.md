@@ -1,18 +1,30 @@
 # Active Context
 
-## 当前状态（更新于 2026-02-13）
+## 当前状态（更新于 2026-02-14）
 
-- Phase 1 已完成：模板命令链 `ping/get_app_info/get_settings/set_settings` 已可用。
-- Phase 2 已完成：主窗口中性化、timer 占位化、快捷键改为窗口切换语义。
-- Phase 3 已完成：业务域命令与业务表已移除，DB 切换为 `starter.db`。
-- 当前分支代码可通过最小验收命令组（IPC/TS/Test/Cargo test）。
+- Claude Config Manager：全部完成，待手动端到端验证。
+- **下一步：ZenMux Quota Monitor**（第二个工具模块）。
+- 设计文档：`.context/zenmux-quota-design.md`。
 
-## 下一步建议
+## ZenMux Quota Monitor（待执行）
 
-- 进入 Phase 4：README、LICENSE、CI、模板发布校验。
+- [ ] Task 1: Rust ZenMux HTTP 客户端（reqwest + Cookie 认证）
+- [ ] Task 2: Rust settings 读写（get/set_zenmux_config）
+- [ ] Task 3: Rust 轮询服务（tokio interval + AppState）
+- [ ] Task 4: Rust macOS Tray FFI（objc2 两行 attributedTitle）
+- [ ] Task 5: Rust 命令注册（5 个新命令 → generate_handler）
+- [ ] Task 6: 前端 IPC 生成（pnpm gen:ipc）
+- [ ] Task 7: 前端 ZenMux API 层 + TanStack Query hooks
+- [ ] Task 8: 前端配置页面 UI（Cookie 输入 + 状态展示）
+- [ ] Task 9: 前端侧边栏路由（新增导航项）
+- [ ] Task 10: 验收（tsc + test + cargo test + 手动验证 Tray）
+
+## Claude Config Manager（已完成）
+
+- [x] Task 1~12: 全部完成
 
 ## 何时更新本文件
 
 - 每完成一个阶段（Phase）后更新一次。
-- 发生“可继续工作的上下文变化”（例如阻塞点、切换优先级、待办变化）时更新。
+- 发生"可继续工作的上下文变化"时更新。
 - 每次更新保持 5-15 行，避免写流水账。

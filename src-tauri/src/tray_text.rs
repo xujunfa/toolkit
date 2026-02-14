@@ -9,12 +9,12 @@ use objc2_app_kit::{
     NSFont, NSFontAttributeName, NSFontWeightLight, NSMutableParagraphStyle,
     NSParagraphStyleAttributeName, NSStatusBarButton,
 };
-use objc2_foundation::{MainThreadMarker, NSMutableAttributedString, NSRange, NSString};
+use objc2_foundation::{MainThreadMarker, NSMutableAttributedString, NSRange, NSString, NSNumber};
 
 /// Set a two-line attributed title on the tray icon's status bar button.
 ///
-/// Creates an NSAttributedString with `"line1\nline2"`, 9pt light system font,
-/// and tight line spacing via NSMutableParagraphStyle.
+/// Creates an NSAttributedString with `"line1\nline2"`, 8pt light system font,
+/// with negative baseline offset for vertical centering.
 ///
 /// Must be called from the main thread (guaranteed by `with_inner_tray_icon`).
 pub fn set_two_line_title(tray: &tray_icon::TrayIcon, line1: &str, line2: &str) {
@@ -36,12 +36,10 @@ pub fn set_two_line_title(tray: &tray_icon::TrayIcon, line1: &str, line2: &str) 
     // 8pt light system font for better centering in menu bar
     let font = unsafe { NSFont::systemFontOfSize_weight(8.0, NSFontWeightLight) };
 
-    // Line spacing tuned for vertical centering in the 22pt menu bar.
-    // 2 lines × 10pt = 20pt with 1pt padding top/bottom
+    // Paragraph style with alignment centered
     let para_style = NSMutableParagraphStyle::new();
+    para_style.setAlignment(objc2_app_kit::NSTextAlignment::Center);
     para_style.setLineSpacing(0.0);
-    para_style.setMinimumLineHeight(10.0);
-    para_style.setMaximumLineHeight(10.0);
 
     // Apply attributes to the full range
     // SAFETY: NSFont and NSMutableParagraphStyle are valid attribute value types.
@@ -51,8 +49,23 @@ pub fn set_two_line_title(tray: &tray_icon::TrayIcon, line1: &str, line2: &str) 
         let para_obj: &AnyObject =
             &*(para_style.as_ref() as *const NSMutableParagraphStyle as *const AnyObject);
 
+        // NSNumber for baseline offset (negative moves up)
+        let baseline_offset = NSNumber::new_i32(-1);
+        let baseline_obj: &AnyObject = &*(baseline_offset.as_ref() as *const NSNumber as *const AnyObject);
+
         attr_str.addAttribute_value_range(NSFontAttributeName, font_obj, full_range);
         attr_str.addAttribute_value_range(NSParagraphStyleAttributeName, para_obj, full_range);
+
+        // Split range: apply baseline offset to second line only
+        let line1_len = line1.len();
+        if line2.len() > 0 {
+            let line2_range = NSRange::new(line1_len + 1, line2.len());
+            attr_str.addAttribute_value_range(
+                objc2_app_kit::NSBaselineOffsetAttributeName,
+                baseline_obj,
+                line2_range,
+            );
+        }
     }
 
     // Set on button

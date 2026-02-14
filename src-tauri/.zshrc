@@ -1,0 +1,5 @@
+
+
+# === CLAUDE_CODE_ALIAS_START (DO NOT EDIT MANUALLY) ===
+alias cctest="AUTH_TOKEN=xxxxxx KEY=123 claude"
+# === CLAUDE_CODE_ALIAS_END ===

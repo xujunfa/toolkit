@@ -253,6 +253,22 @@ function buildGeneratedFile({
     });
   }
 
+  // Recursively discover nested struct types referenced by inline structs
+  function collectNestedStructs(structName) {
+    const fields = structs.get(structName) || [];
+    for (const field of fields) {
+      const tsType = rustTypeToTs(field.rustType, knownTypes, generatedStructs);
+      const bareType = tsType.replace(/\[\]$/, "").replace(/\s*\|\s*null$/, "");
+      if (generatedStructs.has(bareType) && !knownTypes.has(bareType) && !inlineStructs.has(bareType)) {
+        inlineStructs.add(bareType);
+        collectNestedStructs(bareType);
+      }
+    }
+  }
+  for (const structName of [...inlineStructs]) {
+    collectNestedStructs(structName);
+  }
+
   const lines = [];
   lines.push("/**");
   lines.push(" * AUTO-GENERATED FILE. DO NOT EDIT.");

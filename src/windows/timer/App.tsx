@@ -7,7 +7,7 @@ function App() {
       >
         <div className="space-y-2" data-tauri-drag-region>
           <p className="text-xs uppercase tracking-[0.2em] text-emerald-200">
-            tauri-mac-starter
+            Toolkit
           </p>
           <h1 className="text-lg font-semibold">Timer Placeholder</h1>
           <p className="text-sm text-emerald-100/80">

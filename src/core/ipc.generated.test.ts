@@ -8,6 +8,16 @@ describe('ipc generated types', () => {
       'get_app_info',
       'get_settings',
       'set_settings',
+      'list_profiles',
+      'create_profile',
+      'update_profile',
+      'delete_profile',
+      'sync_profiles_to_zshrc',
+      'get_zenmux_config',
+      'set_zenmux_config',
+      'get_zenmux_usage',
+      'start_zenmux_polling',
+      'stop_zenmux_polling',
       'update_tray_title',
     ]);
   });

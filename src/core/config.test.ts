@@ -7,7 +7,7 @@ import {
 
 describe('template config', () => {
   it('exposes template metadata', () => {
-    expect(TEMPLATE_INFO.name).toBe('tauri-mac-starter');
+    expect(TEMPLATE_INFO.name).toBe('toolkit');
     expect(TEMPLATE_INFO.version).toBe('0.1.0');
     expect(TEMPLATE_INFO.description.length).toBeGreaterThan(0);
   });

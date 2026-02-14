@@ -16,18 +16,84 @@ export interface AppSettings {
   theme: string;
 }
 
+export interface CreateProfileInput {
+  name: string;
+  alias: string;
+  env_vars: EnvVar[];
+}
+
+export interface EnvVar {
+  key: string;
+  value: string;
+}
+
+export interface ProfileResponse {
+  id: string;
+  name: string;
+  alias: string;
+  env_vars: EnvVar[];
+  created_at: string;
+  updated_at: string;
+}
+
 export interface SetSettingsInput {
   locale: string | null;
   launch_on_login: boolean | null;
   theme: string | null;
 }
 
+export interface SyncProfilesResult {
+  message: string;
+  target_path: string;
+  is_real_zshrc: boolean;
+}
+
+export interface UpdateProfileInput {
+  name: string | null;
+  alias: string | null;
+  env_vars: EnvVar[] | null;
+}
+
+export interface ZenmuxConfig {
+  ctoken: string;
+  session_id: string;
+  session_id_sig: string;
+  updated_at: string;
+}
+
+export interface ZenmuxQuotaItem {
+  tier_code: string;
+  period_type: string;
+  period_duration: string;
+  cycle_start_time: string;
+  cycle_end_time: string;
+  used_rate: number;
+  quota_status: number;
+  status: number;
+}
+
+export interface ZenmuxUsageData {
+  items: ZenmuxQuotaItem[];
+  tray_text: string;
+  fetched_at: string;
+}
+
 export const COMMAND_NAMES = [
-  'ping',
-  'get_app_info',
-  'get_settings',
-  'set_settings',
-  'update_tray_title',
+  "ping",
+  "get_app_info",
+  "get_settings",
+  "set_settings",
+  "list_profiles",
+  "create_profile",
+  "update_profile",
+  "delete_profile",
+  "sync_profiles_to_zshrc",
+  "get_zenmux_config",
+  "set_zenmux_config",
+  "get_zenmux_usage",
+  "start_zenmux_polling",
+  "stop_zenmux_polling",
+  "update_tray_title",
 ] as const;
 
 export interface CommandArgs {
@@ -35,6 +101,16 @@ export interface CommandArgs {
   get_app_info: Record<string, never>;
   get_settings: Record<string, never>;
   set_settings: { input: SetSettingsInput };
+  list_profiles: Record<string, never>;
+  create_profile: { input: CreateProfileInput };
+  update_profile: { id: string; input: UpdateProfileInput };
+  delete_profile: { id: string };
+  sync_profiles_to_zshrc: { useRealZshrc: boolean | null };
+  get_zenmux_config: Record<string, never>;
+  set_zenmux_config: { cookie: string };
+  get_zenmux_usage: Record<string, never>;
+  start_zenmux_polling: Record<string, never>;
+  stop_zenmux_polling: Record<string, never>;
   update_tray_title: { title: string };
 }
 
@@ -43,6 +119,16 @@ export interface CommandReturns {
   get_app_info: AppInfo;
   get_settings: AppSettings;
   set_settings: AppSettings;
+  list_profiles: ProfileResponse[];
+  create_profile: ProfileResponse;
+  update_profile: ProfileResponse;
+  delete_profile: void;
+  sync_profiles_to_zshrc: SyncProfilesResult;
+  get_zenmux_config: ZenmuxConfig;
+  set_zenmux_config: ZenmuxConfig;
+  get_zenmux_usage: ZenmuxUsageData;
+  start_zenmux_polling: string;
+  stop_zenmux_polling: string;
   update_tray_title: void;
 }
 
